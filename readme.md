@@ -1,7 +1,7 @@
 **MultiTalent: A Multi-Dataset Approach to Medical Image Segmentation**
-
-<img src="./overview_figure.svg" 
-
+<p align="center">
+<img src="./overview_figure.svg" height="500" title="MultiTalent overview" >
+</p>
 **Requirements** <br />
 This repository is based on  [nnU-Net V1](https://github.com/MIC-DKFZ/nnUNet). 
 After cloning this Repository, it is important to follow the original installation instructions to install nnU-Net as an **[integrative framework](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1)** and get familiar with it first. <br />  <br />
@@ -14,8 +14,9 @@ You can download a trained Multitalent (U-Net and Residual U-Net) model here usi
 
 After that, you could run the following script for inference: <br />
 `CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --master_port=1224 --nproc_per_node=1 ./nnunet/inference/predict_MultiTalent.py -i inputpath -o outputpath -m path_to_model_folds`  <br /> 
- <img src="./boxplot_mean_final.svg" height="400">
-
+<p align="center"> 
+<img src="./boxplot_mean_final.svg" height="550" title="MultiTalent result">
+</p>
 <br /> 
 
 **Training with MultiTalent:** <br />
