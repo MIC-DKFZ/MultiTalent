@@ -276,7 +276,7 @@ def download_and_install_pretrained_model_by_name(taskname):
             shutil.copytree(join(network_training_output_dir,taskname), join(network_training_output_dir, "3d_fullres", taskname), dirs_exist_ok=True)
 
         #wrong upload trainer name...
-        os.rename(join(network_training_output_dir, "3d_fullres", taskname, 'MultiTalent_trainer_resenc_ddp__MultiTalent_resenc_bs4'),
+        os.rename(join(network_training_output_dir, "3d_fullres", taskname, 'MultiTalent_tainer_resenc_ddp__MultiTalent_resenc_bs4'),
                   join(network_training_output_dir, "3d_fullres", taskname, 'MultiTalent_trainer_resenc_ddp_2000ep__MultiTalent_resenc_bs4'))
 
         # model.pkl has old trainernames...
