@@ -27,12 +27,12 @@ from torch.cuda.amp import autocast
 from nnunet.training.network_training.nnUNet_variants.transformers.nnUNetTrainerV2_SwinUNETR_ddp import \
     nnUNetTrainerV2_swinunetr_adam_ddp_lr5e4
 from nnunet.training.network_training.nnUNet_variants.architectural_variants.nnUNetTrainerV2_ResencUNet_SimonsInit import \
-    init_last_bn_before_add_to_0, nnUNetTrainerV2_ResencUNet_SimonsInit
+    init_last_bn_before_add_to_0
 from nnunet.network_architecture.generic_modular_residual_UNet import FabiansUNet, get_default_network_config
 from nnunet.network_architecture.initialization import InitWeights_He
 from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch import nn, distributed
+from torch import distributed
 
 
 class nnUNetTrainerV2_warmup_increasing_lr(nnUNetTrainerV2):
