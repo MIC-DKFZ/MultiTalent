@@ -1,17 +1,39 @@
-**MultiTalent: A Multi-Dataset Approach to Medical Image Segmentation**
+# MultiTalent: A Multi-Dataset Approach to Medical Image Segmentation
+
 
 <p align="center"> 
 <img src="./overview_figure.svg" height="500" title="MultiTalent overview">
 </p> <br /> 
 
-**Requirements**
+Please cite the following work if you find this model useful for your research:
+
+    Ulrich, C., Isensee, F., Wald, T., Zenk, M., Baumgartner, M., & Maier-Hein, K.(2023). 
+    MultiTalent: A Multi-Dataset Approach to Medical Image Segmentation. arXiv preprint arXiv:2303.14444.
+
+Please also cite the following work if you use this pipeline for training:
+
+    Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2020). 
+    nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature Methods, 1-9.
+
+# Requirements
 
 This repository is based on [nnU-Net V1](https://github.com/MIC-DKFZ/nnUNet). 
-After cloning this Repository, it is important to follow the original installation instructions to install nnU-Net as an **[integrative framework](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1)** and get familiar with it first. <br />  <br />
+Please get familiar with it first. 
+
+# Installation
+The repository can be cloned and installed using the following commands.
+
+```bash
+git clone https://github.com/MIC-DKFZ/MultiTalent.git MultiTalent
+cd MultiTalent
+pip install -U .
+```
+Set the Paths of your enviroment according to [nnU-Net V1](https://github.com/MIC-DKFZ/nnUNet/blob/nnunetv1/documentation/setting_up_paths.md)
 
 **Note: We are working on an update to nnU-NetV2.**  <br />
 In nnU-Net V1, the project was still very experimental. In V2 we will make the project more user-friendly. 
 
+# Apply MultiTalent
 You can download a trained Multitalent (U-Net and Residual U-Net) model here using the following command: <br />
 `nnUNet_download_pretrained_model Task100_MultiTalent`
 
@@ -19,9 +41,20 @@ After that, you could run the following script for inference: <br />
 `CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --master_port=1224 --nproc_per_node=1 ./nnunet/inference/predict_MultiTalent.py -i inputpath -o outputpath -m path_to_model_folds`  <br /> 
 <p align="center"> 
 <img src="./boxplot_mean_final.svg" height="550" title="MultiTalent result">
-</p> <br /> 
+</p> 
 
-**Training with MultiTalent:** <br />
+# Fine-tuning MultiTalent
+We recommend to preprocess your target dataset as we did for the MultiTalent dataset collection. 
+
+
+
+You can fine-tune a MultiTalent model on a new task using the following command: 
+```nnUNet_train 3d_fullres nnUNetTrainerV2_warmupsegheads TASK-ID Fold -p plans_name -pretrained_weights  path_to_pretrained_model/model_final_checkpoint.model```<br />
+For fine-tuning a residual encoder, use the trainer *nnUNetTrainerV2_warmupsegheads_resenc*.  
+
+
+
+# Training with MultiTalent:
 
 **Dataset collection** <br />
 In the following, we will give you an instruction how to get and preprocess our partially labelled dataset collection.
