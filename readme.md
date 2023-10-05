@@ -44,13 +44,15 @@ After that, you could run the following script for inference: <br />
 </p> 
 
 # Fine-tuning MultiTalent
-We recommend to preprocess your target dataset as we did for the MultiTalent dataset collection. 
+We recommend to preprocess your target dataset as we did for the MultiTalent dataset collection. We expect, that the dataset is already in the raw data folder as expected by nnU-Net V1. 
+```nnUNet_plan_and_preprocess -t TASK_ID -pl3d ExperimentPlanner3D_v21_Pretrained --planner2d None -overwrite_plans Path_To_MultiTalent_Plan -overwrite_plans_identifier New_Plans_Name --verify_dataset_integrity ```<br />
+*Path_To_MultiTalent_Plan* should point to the plans you downloaded above. 
 
 
-
-You can fine-tune a MultiTalent model on a new task using the following command: 
-```nnUNet_train 3d_fullres nnUNetTrainerV2_warmupsegheads TASK-ID Fold -p plans_name -pretrained_weights  path_to_pretrained_model/model_final_checkpoint.model```<br />
+You can fine-tune a MultiTalent model on a new task using the following command:
+```nnUNet_train 3d_fullres nnUNetTrainerV2_warmupsegheads TASK_ID Fold -p New_Plans_Name -pretrained_weights  path_to_pretrained_model/model_final_checkpoint.model```<br />
 For fine-tuning a residual encoder, use the trainer *nnUNetTrainerV2_warmupsegheads_resenc*.  
+Note, that these trainers only train the new segmentation heads for the first 10 epochs, followed by a warm-up for the whole network. 
 
 
 

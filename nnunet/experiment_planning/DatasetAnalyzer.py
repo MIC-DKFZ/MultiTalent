@@ -159,9 +159,7 @@ class DatasetAnalyzer(object):
         return size_reduction
 
     def _get_voxels_in_foreground(self, patient_identifier, modality_id):
-        print(patient_identifier, 'before')
         all_data = np.load(join(self.folder_with_cropped_data, patient_identifier, ) + ".npz")['data']
-        print(patient_identifier, 'after')
         modality = all_data[modality_id]
         mask = all_data[-1] > 0
         voxels = list(modality[mask][::10]) # no need to take every voxel
