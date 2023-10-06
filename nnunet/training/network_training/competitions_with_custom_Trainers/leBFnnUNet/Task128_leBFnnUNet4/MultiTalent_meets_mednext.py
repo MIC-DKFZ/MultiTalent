@@ -87,17 +87,6 @@ class Multitalent_mednextt(
 
     def initialize_network(self):
         """inference_apply_nonlin to sigmoid"""
-        if self.threeD:
-            cfg = get_default_network_config(3, None, norm_type="in")
-
-        else:
-            cfg = get_default_network_config(1, None, norm_type="in")
-
-        stage_plans = self.plans["plans_per_stage"][self.stage]
-        conv_kernel_sizes = stage_plans["conv_kernel_sizes"]
-        blocks_per_stage_encoder = stage_plans["num_blocks_encoder"]
-        blocks_per_stage_decoder = stage_plans["num_blocks_decoder"]
-        pool_op_kernel_sizes = stage_plans["pool_op_kernel_sizes"]
 
         self.network = MedNeXt(
             in_channels = self.num_input_channels,
@@ -117,7 +106,6 @@ class Multitalent_mednextt(
             self.network.cuda()
         self.network.inference_apply_nonlin = nn.Sigmoid()
 
-
     def setup_DA_params(self):
         """
         net_num_pool_op_kernel_sizes is different in resunet
@@ -132,8 +120,6 @@ class Multitalent_mednextt(
     def process_plans(self, plans):
         super().process_plans(plans)
         self.num_classes = len(self.regions)
-        num_of_outputs_in_mednext = 5
-        self.net_num_pool_op_kernel_sizes = [[2,2,2] for i in range(num_of_outputs_in_mednext+1)]
 
     def initialize(self, training=True, force_load_plans=False):
         """
@@ -216,8 +202,6 @@ class Multitalent_mednextt(
                 pass
 
             self.initialize_network()
-            # stats = calc_parameters_and_flops(self.network, [1,1,96,192,192])
-            # self.print_to_log_file(stats)
             self.initialize_optimizer_and_scheduler()
             self.network = DDP(self.network, device_ids=[self.local_rank])
 
@@ -444,6 +428,7 @@ class Multitalent_mednextt(
 
 
 
+
     def predict_preprocessed_data_return_seg_and_softmax(self, data: np.ndarray, do_mirroring: bool = True,
                                                          mirror_axes: Tuple[int] = None,
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
@@ -622,122 +607,110 @@ class Multitalent_mednextt(
             # if fold==all then we use all images for training and validation
             tr_keys = val_keys = keys
         else:
-            # fold 0-4 are a 5-fold CV that re-uses the splits from the individual datasets (except Task017 and
-            # Task046 because of stupid duplicates)
-            fivefold = [{"train": [], "val": []} for _ in range(5)]
-            preprocessed_dir = preprocessing_output_dir
-            for task_id in np.unique([int(i.split("_")[0]) for i in keys]):
-                if task_id != 46:
-                    task_name = convert_id_to_task_name(task_id)
-                    expected_splits_file = join(
-                        preprocessed_dir, task_name, "splits_final.pkl"
-                    )
-                    splits_t = load_pickle(expected_splits_file)
-                    for f in range(5):
-                        fivefold[f]["train"] += [
-                            "%03.0d_" % task_id + i for i in splits_t[f]["train"]
-                        ]
-                        fivefold[f]["val"] += [
-                            "%03.0d_" % task_id + i for i in splits_t[f]["val"]
-                        ]
-                else:
-                    # for task 46 we ignore the predefined split. That is because we have images from Task17 train and
-                    # test set in there. So what we need to do is
-                    # 1) distribute the images from task46 that are also in task 17 according to the task17 split.
-                    # 2) remove all the task17 test set images
-                    # 3) distribute the remaining images randomly to the 5 folds (seeded, of course)
-                    remaining_task_46_ids = [
-                        i for i in keys if i.startswith("046_PAN")
-                    ]  # this is just the new task46 cases
-                    rs = np.random.RandomState(1234)
-                    rs.shuffle(remaining_task_46_ids)
+            if not isfile(join(self.dataset_directory, "splits_custom.pkl")):
 
-                    task17_splits = load_pickle(
-                        join(
-                            preprocessed_dir,
-                            convert_id_to_task_name(17),
-                            "splits_final.pkl",
-                        )
-                    )
-                    for f in range(5):
-                        fivefold[f]["train"] += [
-                            "%03.0d_" % 46 + i for i in task17_splits[f]["train"]
-                        ]
-                        fivefold[f]["val"] += [
-                            "%03.0d_" % 46 + i for i in task17_splits[f]["val"]
-                        ]
-                        selected_val = remaining_task_46_ids[f::5]
-                        selected_train = [
-                            i for i in remaining_task_46_ids if i not in selected_val
-                        ]
-                        fivefold[f]["train"] += selected_train
-                        fivefold[f]["val"] += selected_val
+                # fold 0-4 are a 5-fold CV that re-uses the splits from the individual datasets (except Task017 and
+                # Task046 because of stupid duplicates)
+                fivefold = [{'train': [], 'val': []} for _ in range(5)]
+                preprocessed_dir = preprocessing_output_dir
+                for task_id in np.unique([int(i.split("_")[0]) for i in keys]):
+                    if task_id != 46:
+                        task_name = convert_id_to_task_name(task_id)
+                        expected_splits_file = join(preprocessed_dir, task_name, 'splits_final.pkl')
+                        splits_t = load_pickle(expected_splits_file)
+                        for f in range(5):
+                            fivefold[f]['train'] += ["%03.0d_" % task_id + i for i in splits_t[f]['train']]
+                            fivefold[f]['val'] += ["%03.0d_" % task_id + i for i in splits_t[f]['val']]
+                    else:
+                        # for task 46 we ignore the predefined split. That is because we have images from Task17 train and
+                        # test set in there. So what we need to do is
+                        # 1) distribute the images from task46 that are also in task 17 according to the task17 split.
+                        # 2) remove all the task17 test set images
+                        # 3) distribute the remaining images randomly to the 5 folds (seeded, of course)
+                        remaining_task_46_ids = [i for i in keys if
+                                                 i.startswith("046_PAN")]  # this is just the new task46 cases
+                        rs = np.random.RandomState(1234)
+                        rs.shuffle(remaining_task_46_ids)
 
-            custom_splits = []
+                        task17_splits = load_pickle(join(preprocessed_dir, convert_id_to_task_name(17),
+                                                         'splits_final.pkl'))
+                        for f in range(5):
+                            fivefold[f]['train'] += ["%03.0d_" % 46 + i for i in task17_splits[f]['train']]
+                            fivefold[f]['val'] += ["%03.0d_" % 46 + i for i in task17_splits[f]['val']]
+                            selected_val = remaining_task_46_ids[f::5]
+                            selected_train = [i for i in remaining_task_46_ids if i not in selected_val]
+                            fivefold[f]['train'] += selected_train
+                            fivefold[f]['val'] += selected_val
 
-            # there are no validation sets here anymore!!!! We essentially train on 'all' for the following
+                custom_splits = []
 
-            # fold 5 is all cases except those from Task003
-            all_but_3 = [i for i in keys if not i.startswith("003_")]
-            all_3 = [i for i in keys if i.startswith("003_")]
-            custom_splits.append({"train": all_but_3, "val": all_but_3})
+                # there are no validation sets here anymore!!!! We essentially train on 'all' for the following
 
-            # fold 6 is all cases except those from Task017. We also need to exclude cases from Task046 that originate
-            # from Task017 (Task046 even contains test set images of Task017. Ouch.
-            all_but_17 = [
-                i
-                for i in keys
-                if not i.startswith("017_") and not i.startswith("046_img")
-            ]
-            all_17 = [
-                i for i in keys if i.startswith("017_") or i.startswith("046_img")
-            ]
-            custom_splits.append({"train": all_but_17, "val": all_but_17})
+                # fold 5 is all cases except those from Task003
+                all_but_3 = [i for i in keys if not i.startswith("003_")]
+                all_3 = [i for i in keys if i.startswith("003_")]
+                custom_splits.append({'train': all_but_3, 'val': all_but_3})
 
-            # fold 7 is all cases except those from Task064
-            all_but_64 = [i for i in keys if not i.startswith("064_")]
-            all_64 = [i for i in keys if i.startswith("064_")]
-            custom_splits.append({"train": all_but_64, "val": all_but_64})
+                # fold 6 is all cases except those from Task017. We also need to exclude cases from Task046 that originate
+                # from Task017 (Task046 even contains test set images of Task017. Ouch.
+                all_but_17 = [i for i in keys if not i.startswith("017_") and not i.startswith("046_img")]
+                all_17 = [i for i in keys if i.startswith("017_") or i.startswith("046_img")]
+                custom_splits.append({'train': all_but_17, 'val': all_but_17})
 
-            # fold 8 uses all cases except those from Task010
-            all_but_10 = [i for i in keys if not i.startswith("010_")]
-            all_10 = [i for i in keys if i.startswith("010_")]
-            custom_splits.append({"train": all_but_10, "val": all_but_10})
+                # fold 7 is all cases except those from Task064
+                all_but_64 = [i for i in keys if not i.startswith("064_")]
+                all_64 = [i for i in keys if i.startswith("064_")]
+                custom_splits.append({'train': all_but_64, 'val': all_but_64})
 
-            # fold 9 uses all cases except those from Task007
-            all_but_07 = [i for i in keys if not i.startswith("007_")]
-            all_07 = [i for i in keys if i.startswith("007_")]
-            custom_splits.append({"train": all_but_07, "val": all_but_07})
+                # fold 8 uses all cases except those from Task010
+                all_but_10 = [i for i in keys if not i.startswith("010_")]
+                all_10 = [i for i in keys if i.startswith("010_")]
+                custom_splits.append({'train': all_but_10, 'val': all_but_10})
 
-            # fold 10 uses all cases except those from Task055
-            all_but_55 = [i for i in keys if not i.startswith("055_")]
-            all_55 = [i for i in keys if i.startswith("055_")]
-            custom_splits.append({"train": all_but_55, "val": all_but_55})
+                # fold 9 uses all cases except those from Task007
+                all_but_07 = [i for i in keys if not i.startswith("007_")]
+                all_07 = [i for i in keys if i.startswith("007_")]
+                custom_splits.append({'train': all_but_07, 'val': all_but_07})
 
-            # fold 11 uses all cases except those from Task008
-            all_but_08 = [i for i in keys if not i.startswith("008_")]
-            all_08 = [i for i in keys if i.startswith("008_")]
-            custom_splits.append({"train": all_but_08, "val": all_but_08})
+                # fold 10 uses all cases except those from Task055
+                all_but_55 = [i for i in keys if not i.startswith("055_")]
+                all_55 = [i for i in keys if i.startswith("055_")]
+                custom_splits.append({'train': all_but_55, 'val': all_but_55})
 
-            splits = fivefold + custom_splits
+                # fold 11 uses all cases except those from Task008
+                all_but_08 = [i for i in keys if not i.startswith("008_")]
+                all_08 = [i for i in keys if i.startswith("008_")]
+                custom_splits.append({'train': all_but_08, 'val': all_but_08})
 
-            # save it for later use
-            if self.local_rank == 0:
-                save_pickle(splits, join(self.dataset_directory, "splits_custom.pkl"))
+                splits = fivefold + custom_splits
+
+                # save it for later use
+                if self.local_rank == 0:
+                    save_pickle(splits, join(self.dataset_directory, "splits_custom.pkl"))
+
+            while not isfile(join(self.dataset_directory, "splits_custom.pkl")):
+                sleep(0.01)
 
             # now select the desired split
-            tr_keys = splits[self.fold]["train"]
-            val_keys = splits[self.fold]["val"]
+            splits = load_pickle(join(self.dataset_directory, "splits_custom.pkl"))
+            tr_keys = splits[self.fold]['train']
+            val_keys = splits[self.fold]['val']
 
         tr_keys.sort()
         val_keys.sort()
         self.dataset_tr = OrderedDict()
         for i in tr_keys:
-            self.dataset_tr[i] = self.dataset[i]
+            if i in self.dataset.keys():
+                self.dataset_tr[i] = self.dataset[i]
+            else:
+                self.print_to_log_file('Warning %s is not in preprocessed folder (might be intentional)' % i)
 
         self.dataset_val = OrderedDict()
         for i in val_keys:
-            self.dataset_val[i] = self.dataset[i]
+            if i in self.dataset.keys():
+                self.dataset_val[i] = self.dataset[i]
+            else:
+                self.print_to_log_file('Warning %s is not in preprocessed folder (might be intentional)' % i)
 
     def compute_loss(self, output, target, valid_regions):
         """
@@ -929,9 +902,7 @@ class Multitalent_mednextt(
             net = self.network.module
         else:
             net = self.network
-        net.do_ds = net.decoder.deep_supervision  # I am stupid and I know it - lol
-        ds = net.decoder.deep_supervision
-        net.decoder.deep_supervision = True
+
 
         _ = self.tr_gen.next()
         _ = self.val_gen.next()
@@ -1044,4 +1015,3 @@ class Multitalent_mednextt(
                 os.remove(join(self.output_folder, "model_latest.model"))
             if isfile(join(self.output_folder, "model_latest.model.pkl")):
                 os.remove(join(self.output_folder, "model_latest.model.pkl"))
-        net.decoder.deep_supervision = ds

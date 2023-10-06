@@ -48,6 +48,7 @@ def main():
                              "Don't use that.",
                         required=False, default=False, action="store_true")
     parser.add_argument("--local_rank", default=0, type=int)
+    parser.add_argument("--local-rank", default=None, type=int)
     parser.add_argument("--fp32", required=False, default=False, action="store_true",
                         help="disable mixed precision training and run old school fp32")
     parser.add_argument("--dbs", required=False, default=False, action="store_true", help="distribute batch size. If "
@@ -118,6 +119,12 @@ def main():
     fp32 = args.fp32
     disable_postprocessing_on_folds = args.disable_postprocessing_on_folds
 
+    if args.local_rank is None:
+        local_rank = args.local-rank
+    else:
+        local_rank = args.local_rank
+
+
     if not task.startswith("Task"):
         task_id = int(task)
         task = convert_id_to_task_name(task_id)
@@ -151,7 +158,7 @@ def main():
         assert issubclass(trainer_class,
                           nnUNetTrainer), "network_trainer was found but is not derived from nnUNetTrainer"
 
-    trainer = trainer_class(plans_file, fold, local_rank=args.local_rank, output_folder=output_folder_name,
+    trainer = trainer_class(plans_file, fold, local_rank, output_folder=output_folder_name,
                             dataset_directory=dataset_directory, batch_dice=batch_dice, stage=stage,
                             unpack_data=decompress_data, deterministic=deterministic, fp16=not fp32,
                             distribute_batch_size=args.dbs)
