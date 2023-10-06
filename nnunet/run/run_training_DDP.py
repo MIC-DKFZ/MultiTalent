@@ -47,7 +47,7 @@ def main():
                              "this is not necessary. Deterministic training will make you overfit to some random seed. "
                              "Don't use that.",
                         required=False, default=False, action="store_true")
-    parser.add_argument("--local-rank", default=0, type=int)
+    parser.add_argument("--local_rank", default=0, type=int)
     parser.add_argument("--fp32", required=False, default=False, action="store_true",
                         help="disable mixed precision training and run old school fp32")
     parser.add_argument("--dbs", required=False, default=False, action="store_true", help="distribute batch size. If "
