@@ -98,7 +98,7 @@ If you want to extend or change the base dataset collection, you would need to a
 `nnUNet_plan_and_preprocess -t 100 -pl3d ExperimentPlanner3D_v21_MultiTalent -pl2d None -tf 16 --verify_dataset_integrity -overwrite_plans_identifier multitalent_bs4` Again, this takes some time. <br />
 This also generates a training plan file that we need for the following network training. By default, this plan generates a batchsize of 2. It is very easy to change the batchsize (see [extending nnU-Net](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/extending_nnunet.md)), but you could also use the plans that we provide. 
 
-3. Copy the custom_splits.pkl file in your preprocessed MultiTalent folder
+3. Copy the splits_custom.pkl file in your preprocessed MultiTalent folder
 
 4. We are almost done, but we need to add the information about the valid labels for each image to the _.pkl_ files: <br />
 `python /nnunet/dataset_conversion/Task100_MultiTalent_addregions.py` This takes only a few seconds. <br /><br />
