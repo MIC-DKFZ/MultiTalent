@@ -7,35 +7,23 @@ import os
 from subprocess import check_output
 from nnunet.paths import nnUNet_raw_data
 import shutil
-from batchviewer import view_batch
+# from batchviewer import view_batch
 
 
 def load_npy_nifti(infile):
     return sitk.GetArrayFromImage(sitk.ReadImage(infile))
 
 
-def align_coordinates(image, label):
-    try:
-        out = check_output(['flirt', '-ref', image, '-in', label, '-out', label, '-usesqform', '-applyxfm'])
-    except Exception as e:
-        print("ERROR", image, label)
-        print(e)
-        out = None
-    return out
 
 
 def align_img(base, name):
     lab_itk = sitk.ReadImage(join(base, "labelsTr", name + ".nii.gz"))
-    lab_npy = sitk.GetArrayFromImage(lab_itk)[:, :, ::-1]
-    lnew = sitk.GetImageFromArray(lab_npy)
-    lnew.CopyInformation(lab_itk)
-    orig = list(lnew.GetOrigin())
-    dir = list(lnew.GetDirection())
-    dir[0] *= -1
-    lnew.SetDirection(tuple(dir))
-    orig[0] = lab_npy.shape[1]
-    lnew.SetOrigin(orig)
-    sitk.WriteImage(lnew, join(base, "labelsTr", name + "2.nii.gz"))
+    img_itk = sitk.ReadImage(join(base, "imagesTr", name + "_0000.nii.gz"))
+    img_itk.SetDirection(lab_itk.GetDirection())
+    img_itk.SetOrigin(lab_itk.GetOrigin())
+    sitk.WriteImage(img_itk, join(base, "imagesTr", name + "_0000.nii.gz"))
+
+
 
 
 
@@ -47,25 +35,7 @@ def check_alignment(base, name):
     overlay = np.copy(img)
     overlay[lab != 0] -= np.percentile(img, 97)
     print(name)
-    view_batch(img, lab, overlay)
-
-
-def playing_with_alignment():
-    base = "/home/fabian/temp/align_Task46"
-    patients = [i[:-7] for i in subfiles(join(base, "labelsTr"), join=False, suffix=".gz")]
-    p = Pool(8)
-    images = [join(base, "imagesTr", i + "_0000.nii.gz") for i in patients]
-    labels = [join(base, "labelsTr", i + ".nii.gz") for i in patients]
-
-    p.starmap(align_coordinates, zip(images, labels))
-
-    p.close()
-    p.join()
-
-    # now check all
-    for p in patients:
-        if p.startswith("img"):
-            check_alignment(base, p)
+    # view_batch(img, lab, overlay)
 
 
 
@@ -105,7 +75,7 @@ if __name__ == "__main__":
     #target folder
     #downloaded label raw data
     labels_base = "/home/constantin/Desktop/pancreas/labels"
-
+    #
     maybe_mkdir_p(base_out)
     args = []
     for case in subdirs(base, join=False):
@@ -205,3 +175,10 @@ if __name__ == "__main__":
     with open(os.path.join(out_base, "dataset.json"), 'w') as f:
         json.dump(json_dict, f, indent=4, sort_keys=True)
 
+
+
+for file in os.listdir(labelstr):
+    if file.startswith('PAN'):
+        print(file)
+        align_img(out_base, file[:-7])
+        # check_alignment(out_base, file[:-7])

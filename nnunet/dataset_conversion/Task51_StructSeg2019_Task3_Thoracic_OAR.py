@@ -1,9 +1,14 @@
 from batchgenerators.utilities.file_and_folder_operations import *
 import shutil
+from nnunet.paths import nnUNet_raw_data
 
 if __name__ == "__main__":
-    base = "/home/fabian/drives/E132-Projekte/Projects/2018_MedicalDecathlon/data_intern_raw/StructSeg2019/Thoracic_OAR"
-    out = "/media/fabian/My Book/MedicalDecathlon/nnUNet_raw_splitted/Task51_StructSeg2019_Task3_Thoracic_OAR"
+
+
+    task_id = 51
+    task_name = "Task51_StructSeg2019_Task3_Thoracic_OAR"
+    base = "/raw_base_dir/"
+    out = join(nnUNet_raw_data, task_name)
 
     data_out = join(out, "imagesTr")
     seg_out = join(out, "labelsTr")
