@@ -11,34 +11,62 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
-
+import os
 from collections import OrderedDict
 from nnunet.paths import nnUNet_raw_data
 from batchgenerators.utilities.file_and_folder_operations import *
 import shutil
 from multiprocessing import Pool
 import nibabel
+import dicom2nifti
+from nnunet.paths import nnUNet_raw_data
 
 
 def reorient(filename):
+    # print(filename)
     img = nibabel.load(filename)
     img = nibabel.as_closest_canonical(img)
     nibabel.save(img, filename)
 
 
 if __name__ == "__main__":
-    base = "/media/fabian/DeepLearningData/Pancreas-CT"
+
+    #raw pan ct data
+    base = "/home/constantin/Desktop/manifest-1599750808610/Pancreas-CT"
+
+    base_out = "/home/constantin/Desktop/manifest-1599750808610/nifti"
+    maybe_mkdir_p(base_out)
+
+    #downloaded label raw data
+    labels_base = "/home/constantin/Downloads/TCIA_pancreas_labels-02-05-2017"
+
+
+    args = []
+    for case in subdirs(base, join=False):
+        cur = join(base, case)
+        outfile = join(base_out, case + ".nii.gz")
+        for t1 in subdirs(cur, join=False):
+            curr = join(cur, t1)
+            for t2 in subdirs(curr, join=False):
+                currr = join(curr, t2)
+                if not isfile(outfile):
+                    args.append([currr, outfile])
+
+
+    p = Pool(4)
+    p.starmap(dicom2nifti.dicom_series_to_nifti, args)
+    p.close()
+    p.join()
 
     # reorient
-    p = Pool(8)
+    p = Pool(4)
     results = []
 
-    for f in subfiles(join(base, "data"), suffix=".nii.gz"):
+    for f in subfiles(base_out, suffix=".nii.gz"):
         results.append(p.map_async(reorient, (f, )))
     _ = [i.get() for i in results]
 
-    for f in subfiles(join(base, "TCIA_pancreas_labels-02-05-2017"), suffix=".nii.gz"):
+    for f in subfiles(labels_base, suffix=".nii.gz"):
         results.append(p.map_async(reorient, (f, )))
     _ = [i.get() for i in results]
 
@@ -57,14 +85,15 @@ if __name__ == "__main__":
 
     train_patient_names = []
     test_patient_names = []
-    cases = list(range(1, 83))
-    folder_data = join(base, "data")
-    folder_labels = join(base, "TCIA_pancreas_labels-02-05-2017")
+    cases = os.listdir(base_out)
+    folder_data = base_out
+    folder_labels = labels_base
     for c in cases:
-        casename = "pancreas_%04.0d" % c
-        shutil.copy(join(folder_data, "PANCREAS_%04.0d.nii.gz" % c), join(imagestr, casename + "_0000.nii.gz"))
-        shutil.copy(join(folder_labels, "label%04.0d.nii.gz" % c), join(labelstr, casename + ".nii.gz"))
-        train_patient_names.append(casename)
+        casename =  c[:-7]
+        if c not in ['PANCREAS_0045.nii.gz', 'PANCREAS_0007.nii.gz', 'PANCREAS_0032.nii.gz', 'PANCREAS_0027.nii.gz']:
+            shutil.copy(join(folder_data, c), join(imagestr, c[:-7] + "_0000.nii.gz"))
+            shutil.copy(join(folder_labels, 'label' +c[9:]), join(labelstr, c))
+            train_patient_names.append(casename)
 
     json_dict = OrderedDict()
     json_dict['name'] = task_name
