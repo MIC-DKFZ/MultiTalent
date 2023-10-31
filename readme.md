@@ -35,22 +35,31 @@ In nnU-Net V1, the project was still very experimental. In V2 we will make the p
 
 # Apply MultiTalent
 You can download a trained Multitalent (U-Net and Residual U-Net) model here using the following command: <br />
-`nnUNet_download_pretrained_model Task100_MultiTalent`
+
+    nnUNet_download_pretrained_model Task100_MultiTalent
+
+Please use the command above, because it makes some modifications to your plan files! <br />
 
 After that, you could run the following script for inference: <br />
-`CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --master_port=1224 --nproc_per_node=1 ./nnunet/inference/predict_MultiTalent.py -i inputpath -o outputpath -m path_to_model_folds`  <br /> 
+
+    CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --master_port=1224 --nproc_per_node=1 ./nnunet/inference/predict_MultiTalent.py -i inputpath -o outputpath -m path_to_model_folds
+
 <p align="center"> 
 <img src="./boxplot_mean_final.svg" height="550" title="MultiTalent result">
 </p> 
 
 # Fine-tuning MultiTalent
 We recommend to preprocess your target dataset as we did for the MultiTalent dataset collection. We expect, that the dataset is already in the raw data folder as expected by nnU-Net V1. 
-```nnUNet_plan_and_preprocess -t TASK_ID -pl3d ExperimentPlanner3D_v21_Pretrained --planner2d None -overwrite_plans Path_To_MultiTalent_Plan -overwrite_plans_identifier New_Plans_Name --verify_dataset_integrity ```<br />
+
+    nnUNet_plan_and_preprocess -t TASK_ID -pl3d ExperimentPlanner3D_v21_Pretrained --planner2d None -overwrite_plans Path_To_MultiTalent_Plan -overwrite_plans_identifier New_Plans_Name --verify_dataset_integrity
+
 *Path_To_MultiTalent_Plan* should point to the plans you downloaded above. 
 
 
 You can fine-tune a MultiTalent model on a new task using the following command:
-```nnUNet_train 3d_fullres nnUNetTrainerV2_warmupsegheads TASK_ID Fold -p New_Plans_Name -pretrained_weights  path_to_pretrained_model/model_final_checkpoint.model```<br />
+    
+    nnUNet_train 3d_fullres nnUNetTrainerV2_warmupsegheads TASK_ID Fold -p New_Plans_Name -pretrained_weights  path_to_pretrained_model/model_final_checkpoint.model
+
 For fine-tuning a residual encoder, use the trainer *nnUNetTrainerV2_warmupsegheads_resenc*.  
 Note, that these trainers only train the new segmentation heads for the first 10 epochs, followed by a warm-up for the whole network. 
 
@@ -89,19 +98,28 @@ It is important that you choose the same folder names as we did: <br />
 
 
 
-**Preprocessing for training**
-1. First, we need to generate our raw dataset for the multi-class training. Run the following script to copy all the images in the right folder, convert the labelmaps, generate the dataset.jason file and transpose the images if needed. <br />
-`/nnunet/dataset_conversion/Task100_MultiTalent.py` It can take around 3 hours, depending on your system.
+**Preprocessing for training**<br />
+First, we need to generate our raw dataset for the multi-class training. Run the following script to copy all the images in the right folder, convert the labelmaps, generate the dataset.jason file and transpose the images if needed:
+
+    /nnunet/dataset_conversion/Task100_MultiTalent.py
+
+It can take around 3 hours, depending on your system.
 If you want to extend or change the base dataset collection, you would need to adapt this file!
 
-2. Now, we can use the nn-UNet preprocessing function with a specialized preprocessor: <br />
-`nnUNet_plan_and_preprocess -t 100 -pl3d ExperimentPlanner3D_v21_MultiTalent -pl2d None -tf 16 --verify_dataset_integrity -overwrite_plans_identifier multitalent_bs4` Again, this takes some time. <br />
+Now, we can use the nn-UNet preprocessing function with a specialized preprocessor: <br />
+    
+    nnUNet_plan_and_preprocess -t 100 -pl3d ExperimentPlanner3D_v21_MultiTalent -pl2d None -tf 16 --verify_dataset_integrity -overwrite_plans_identifier multitalent_bs4
+Again, this takes some time. 
+
 This also generates a training plan file that we need for the following network training. By default, this plan generates a batchsize of 2. It is very easy to change the batchsize (see [extending nnU-Net](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/extending_nnunet.md)), but you could also use the plans that we provide. 
 
-3. Copy the splits_custom.pkl file in your preprocessed MultiTalent folder
+Next, copy the *./splits_custom.pkl file* in your preprocessed MultiTalent folder
 
-4. We are almost done, but we need to add the information about the valid labels for each image to the _.pkl_ files: <br />
-`python /nnunet/dataset_conversion/Task100_MultiTalent_addregions.py` This takes only a few seconds. <br /><br />
+We are almost done, but we need to add the information about the valid labels for each image to the _.pkl_ files: <br />
+
+    python /nnunet/dataset_conversion/Task100_MultiTalent_addregions.py
+
+This takes only a few seconds. <br /><br />
 
 
 
@@ -110,7 +128,8 @@ This also generates a training plan file that we need for the following network 
 **Training of the Multi-Class network** <br />
 First, you should take a look at the nnU-Net V1 distributed training instructions. 
 To train a MultiTalent network, run the following command: <br />
-`CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --master_port=1234 --nproc_per_node=2 ./nnunet/run/run_training_DDP.py 3d_fullres MultiTalent_trainer_ddp 100  0 -p MultiTalent_bs4 --dbs`
+
+    CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --master_port=1234 --nproc_per_node=2 ./nnunet/run/run_training_DDP.py 3d_fullres MultiTalent_trainer_ddp 100  0 -p MultiTalent_bs4 --dbs
 
 
 
