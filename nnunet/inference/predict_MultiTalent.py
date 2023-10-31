@@ -403,7 +403,8 @@ def main():
                                                                                "--num_parts=n (each with a different "
                                                                                "GPU (for example via "
                                                                                "CUDA_VISIBLE_DEVICES=X)")
-    parser.add_argument("--local-rank", default=0, type=int)
+    parser.add_argument("--local_rank", default=0, type=int)
+    parser.add_argument("--local-rank", default=None, type=int)
     parser.add_argument("--num_parts", type=int, required=False, default=1,
                         help="Used to parallelize the prediction of "
                              "the folder over several GPUs. If you "
@@ -473,6 +474,11 @@ def main():
     overwrite = args.overwrite_existing
     mode = args.mode
     all_in_gpu = args.all_in_gpu
+
+    if args.local_rank is None:
+        local_rank = args.local-rank
+    else:
+        local_rank = args.local_rank
 
     if lowres_segmentations == "None":
         lowres_segmentations = None
