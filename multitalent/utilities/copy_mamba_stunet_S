@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+PLANS=nnUNetPlans
+TRAINER=STUNetTrainer_small
+OUTPUT_IDENTIFIER=STU-Net_S
+export nnUNet_def_n_proc=48
+multitalent_accumulate_crossval_results 17 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset017_AbdominalOrganSegmentation/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}
+multitalent_accumulate_crossval_results 27 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset027_ACDC/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}
+multitalent_accumulate_crossval_results 3 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset003_Liver/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}
+multitalent_accumulate_crossval_results 137 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset137_BraTS2021/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}
+multitalent_accumulate_crossval_results 220 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset220_KiTS2023/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}
+multitalent_accumulate_crossval_results 223 -c 3d_fullres -o $nnUNet_results/../result_paper/Dataset223_AMOS2022postChallenge/${OUTPUT_IDENTIFIER} -f 0 1 2 3 4 -p ${PLANS} -tr ${TRAINER}

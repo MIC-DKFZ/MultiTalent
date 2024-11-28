@@ -1,0 +1,14 @@
+{
+    "Dataset003_Liver": {
+        "nnUNetTrainer__nnUNetPlans__3d_fullres": 67
+    },
+    "Dataset006_Lung": {
+        "nnUNetTrainer__nnUNetPlans__3d_fullres": 26
+    },
+    "Dataset007_Pancreas": {
+        "nnUNetTrainer__nnUNetPlans__3d_fullres": 8
+    },
+    "Dataset008_HepaticVessel": {
+        "nnUNetTrainer__nnUNetPlans__3d_fullres": 51
+    }
+}

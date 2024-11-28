@@ -1,0 +1,15 @@
+# incomplete
+
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 980 3d_fullres all -tr nnUNetTrainer_airwayAug_new"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 980 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth"
+
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 981 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 982 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 983 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 984 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth"
+
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 981 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 982 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 983 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling"
+bsub -R "select[hname!='e230-dgx2-2']" -R "select[hname!='e230-dgx2-1']" -R "select[hname!='e230-dgx1-1']" -R "tensorcore" -q gpu-lowprio -gpu num=1:j_exclusive=yes:gmem=33G -L /bin/bash "source ~/load_env_cluster4.sh &&  multitalent_train 984 3d_fullres all -tr nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling"
+

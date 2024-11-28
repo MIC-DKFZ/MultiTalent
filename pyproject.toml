@@ -1,0 +1,103 @@
+[project]
+name = "MultiTalent"
+version = "2.0"
+requires-python = ">=3.9"
+description = "MultiTalent is a framework to combine training with multiple datasets, heavily based on nnU-NetV2"
+readme = "readme.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Constantin Ulrich", email = 'constantin.ulrich@dkfz-heidelberg.de' },
+    { name = "Fabian Isensee", email = "f.isensee@dkfz-heidelberg.de"}]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+keywords = [
+    'deep learning',
+    'image segmentation',
+    'semantic segmentation',
+    'medical image analysis',
+    'medical image segmentation',
+    'nnU-Net',
+    'nnunet'
+]
+dependencies = [
+    "torch>=2.1.2",
+    "acvl-utils>=0.2,<0.3",  # 0.3 may bring breaking changes. Careful!
+    "dynamic-network-architectures>=0.3.1,<0.4",  # 0.3.1 and lower are supported, 0.4 may have breaking changes. Let's be careful here
+    "tqdm",
+    "dicom2nifti",
+    "scipy",
+    "batchgenerators>=0.25",
+    "numpy>=1.24",
+    "scikit-learn",
+    "scikit-image>=0.19.3",
+    "SimpleITK>=2.2.1",
+    "pandas",
+    "graphviz",
+    'tifffile',
+    'requests',
+    "nibabel",
+    "matplotlib",
+    "seaborn",
+    "imagecodecs",
+    "yacs",
+    "medpy",
+    "batchgeneratorsv2>=0.2",
+    "einops",
+    "blosc2"
+]
+
+[project.urls]
+homepage = "https://github.com/MIC-DKFZ/MultiTalent"
+repository = "https://github.com/MIC-DKFZ/MultiTalent"
+
+[project.scripts]
+multitalent_plan_and_preprocess = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:plan_and_preprocess_entry"
+multitalent_extract_fingerprint = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:extract_fingerprint_entry"
+multitalent_plan_experiment = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:plan_experiment_entry"
+multitalent_preprocess = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:preprocess_entry"
+multitalent_train = "multitalent.run.run_training_MT:run_training_entry"
+multitalent_predict_from_modelfolder = "multitalent.inference.predict_from_raw_data:predict_entry_point_modelfolder"
+multitalent_predict = "multitalent.inference.predict_from_raw_data:predict_entry_point"
+nnUNetv2_train = "multitalent.run.run_training_MT:run_training_entry"
+nnUNetv2_predict_from_modelfolder = "multitalent.inference.predict_from_raw_data:predict_entry_point_modelfolder"
+nnUNetv2_predict = "multitalent.inference.predict_from_raw_data:predict_entry_point"
+multitalent_convert_old_nnUNet_dataset = "multitalent.dataset_conversion.convert_raw_dataset_from_old_nnunet_format:convert_entry_point"
+multitalent_find_best_configuration = "multitalent.evaluation.find_best_configuration:find_best_configuration_entry_point"
+multitalent_determine_postprocessing = "multitalent.postprocessing.remove_connected_components:entry_point_determine_postprocessing_folder"
+multitalent_apply_postprocessing = "multitalent.postprocessing.remove_connected_components:entry_point_apply_postprocessing"
+multitalent_ensemble = "multitalent.ensembling.ensemble:entry_point_ensemble_folders"
+multitalent_accumulate_crossval_results = "multitalent.evaluation.find_best_configuration:accumulate_crossval_results_entry_point"
+multitalent_plot_overlay_pngs = "multitalent.utilities.overlay_plots:entry_point_generate_overlay"
+multitalent_download_pretrained_model_by_url = "multitalent.model_sharing.entry_points:download_by_url"
+multitalent_install_pretrained_model_from_zip = "multitalent.model_sharing.entry_points:install_from_zip_entry_point"
+multitalent_export_model_to_zip = "multitalent.model_sharing.entry_points:export_pretrained_model_entry"
+multitalent_move_plans_between_datasets = "multitalent.experiment_planning.plans_for_pretraining.move_plans_between_datasets:entry_point_move_plans_between_datasets"
+multitalent_evaluate_folder = "multitalent.evaluation.evaluate_predictions:evaluate_folder_entry_point"
+multitalent_evaluate_simple = "multitalent.evaluation.evaluate_predictions:evaluate_simple_entry_point"
+multitalent_convert_MSD_dataset = "multitalent.dataset_conversion.convert_MSD_dataset:entry_point"
+prepare_MT_training = "multitalent.utilities.MultiTalent.create_MT_trainingsjson:prepare_MT_training"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "ruff",
+    "pre-commit"
+]
+
+[build-system]
+requires = ["setuptools>=67.8.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.codespell]
+skip = '.git,*.pdf,*.svg'
+#
+# ignore-words-list = ''

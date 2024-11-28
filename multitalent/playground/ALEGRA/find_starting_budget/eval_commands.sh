@@ -1,0 +1,33 @@
+cd /dkfz/cluster/gpu/data/OE0441/isensee/nnUNet_raw/nnUNet_raw_remake/Dataset980_ALEGRA_fullyAnnotated
+
+multitalent_evaluate_simple labelsVal imagesVal_pred_980_3d_fullres_nnUNetTrainer_airwayAug_new_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_980_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_fall -l 1 -np 128
+
+multitalent_evaluate_simple labelsVal imagesVal_pred_981_3d_fullres_nnUNetTrainer_airwayAug_new_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_981_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_981_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_fall -l 1 -np 128
+
+multitalent_evaluate_simple labelsVal imagesVal_pred_982_3d_fullres_nnUNetTrainer_airwayAug_new_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_982_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_982_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_fall -l 1 -np 128
+
+multitalent_evaluate_simple labelsVal imagesVal_pred_983_3d_fullres_nnUNetTrainer_airwayAug_new_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_983_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling_fall -l 1 -np 128 #
+multitalent_evaluate_simple labelsVal imagesVal_pred_983_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_fall -l 1 -np 128
+
+multitalent_evaluate_simple labelsVal imagesVal_pred_984_3d_fullres_nnUNetTrainer_airwayAug_new_fall -l 1 -np 128
+multitalent_evaluate_simple labelsVal imagesVal_pred_984_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_betterIgnSampling_fall -l 1 -np 128 #
+multitalent_evaluate_simple labelsVal imagesVal_pred_984_3d_fullres_nnUNetTrainer_airwayAug_new_noSmooth_fall -l 1 -np 128
+
+
+
+
+
+
+
+
+
+
+
+
+
