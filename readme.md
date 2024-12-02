@@ -6,11 +6,11 @@ MultiTalent allows you to train with ANY 3D dataset, as long it is compatible wi
 So, please make yourself familiar with [nnU-Netv2](https://github.com/MIC-DKFZ/nnUNet), and prepare your datasets accordingly. 
 
 Follow the steps here to get started (identical to nnunet):
-          ```bash
-          git clone https://github.com/MIC-DKFZ/MultiTalent.git
-          cd multitalent
-          pip install -e .
-          ```
+  ```bash
+  git clone https://github.com/MIC-DKFZ/MultiTalent.git
+  cd multitalent
+  pip install -e .
+  ```
 Remember, to also set the [nnU-Net paths](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/setting_up_paths.md).
 After that, prepare the datasets you want to train with, as expected by nnunet: [Dataset conversion](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/dataset_format.md).
 
@@ -29,7 +29,7 @@ Now, we want to preprocess all data similary as expected for the MultiTalent com
 
 `multitalent_train experimentID 3d_fullres fold -p plansname -tr MultiTalent_trainer`
 
-When training with more than 500images in total, we recommend to increase batch size and training length.
+When training with more than 500images in total, we recommend to increase batch size and training length. This can be done by writing a new Trainer.
 
 **Fine-Tuning**
 ToDo
