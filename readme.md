@@ -19,7 +19,9 @@ Now, we want to preprocess all data similary as expected for the MultiTalent com
 >prepare_MT_training MT_test_onescript MT_id -d nnunet_ids --verify_dataset_integrity
 
 `MT_id`: Must be a new nnU-Net dataset ID
+
 `nnunet_ids`: Is a list of nnU-Net dataset IDs that will be used for the MultiTalent training. e.g.  `-d 3 6 7 8 9 10` for all Medical decathlon CT datasets
+
 `-p`: (Optional) Path to a plans.json file that is used for the MultiTalent training. We recommend to just use the provided `nnUNetResEncUNetLPlansIso1x1x1.json`.
     If not set, the plan resulting from the experiment planner for a ResEncL with fixed target spacing 1x1x1 for the first dataset that is provided will be used for all others.   
 
