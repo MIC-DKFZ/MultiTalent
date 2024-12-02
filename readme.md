@@ -37,10 +37,11 @@ ToDo
 
 
 
-Please cite the following work if you find this model useful for your research. If you want to reproduce the paper results, checkout the corresponding branch. :
+Please cite the following work if you find this model useful for your research. If you want to reproduce the paper results, checkout the corresponding branch (MultiTalentV1). :
 
-    Ulrich, C., Isensee, F., Wald, T., Zenk, M., Baumgartner, M., & Maier-Hein, K.(2023). 
-    MultiTalent: A Multi-Dataset Approach to Medical Image Segmentation. arXiv preprint arXiv:2303.14444.
+    Ulrich, C., Isensee, F., Wald, T., Zenk, M., Baumgartner, M., Maier-Hein, K.H. (2023). 
+    MultiTalent: A Multi-dataset Approach to Medical Image Segmentation. In: Greenspan, H., et al. 
+    Medical Image Computing and Computer Assisted Intervention – MICCAI 2023.
 
 Please also cite the following work if you use this pipeline for training:
 
