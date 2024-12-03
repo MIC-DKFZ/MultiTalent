@@ -16,20 +16,18 @@ After that, prepare the datasets you want to train with, as expected by nnunet: 
 
 Now, we want to preprocess all data similary as expected for the MultiTalent combined training. depending on the number and sice of dataset that are selected, this can take some time. 
 
-`prepare_MT_training MT_test_onescript MT_id -d nnunet_ids --verify_dataset_integrity`
+>prepare_MT_training MT_name MT_id -d nnunet_ids --verify_dataset_integrity
 
-**MT_id**: Must be a new nnU-Net dataset ID
+`MT_name`: Must be a new nnU-Net dataset name \
+`MT_id`: Must be a new nnU-Net dataset ID \
+`nnunet_ids`: Is a list of nnU-Net dataset IDs that will be used for the MultiTalent training. e.g.  `-d 3 6 7 8 9 10` for all Medical decathlon CT datasets \
+`-p`: (Optional) Path to a plans.json file that is used for the MultiTalent training. We recommend to just use the provided `nnUNetResEncUNetLPlansIso1x1x1.json`.
+    If not set, the plan resulting from the experiment planner for a ResEncL with fixed target spacing 1x1x1 for the first dataset that is provided will be used for all others.  
 
-**nnunet_ids**: Is a list of nnU-Net dataset IDs that will be used for the MultiTalent training. e.g.  `-d 3 6 7 8 9 10` for all Medical decathlon CT datasets
 
-**-p:** (Optional) Path to a plans.json file that is used for the MultiTalent training. We recommend to just use the provided `nnUNetResEncUNetLPlansIso1x1x1.json`.
-    If not set, the plan resulting from the experiment planner for a ResEncL with fixed target spacing 1x1x1 for the first dataset that is provided will be used for all others.   
+>multitalent_train experimentID 3d_fullres fold -p targeplansname -tr MultiTalent_trainer
 
-**Train MultiTalent:**
-
-`multitalent_train experimentID 3d_fullres fold -p plansname -tr MultiTalent_trainer`
-
-When training with more than 500images in total, we recommend to increase batch size and training length. This can be done by writing a new Trainer.
+When training with more than 500images in total, we recommend to increase batch size and training length.
 
 **Fine-Tuning**
 ToDo
