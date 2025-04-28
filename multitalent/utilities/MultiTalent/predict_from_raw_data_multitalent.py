@@ -612,7 +612,6 @@ class nnUNetPredictor_MT(object):
 
         empty_cache(self.device)
 
-        # Autocast is a little bitch.
         # If the device_type is 'cpu' then it's slow as heck on some CPUs (no auto bfloat16 support detection)
         # and needs to be disabled.
         # If the device_type is 'mps' then it will complain that mps is not implemented, even if enabled=False
@@ -712,7 +711,7 @@ def predict_entry_point_modelfolder():
     parser.add_argument('-target_id', nargs='+', type=str, required=False, default=None,
                         help='Defines which dataset heads are predicted, default all')
     parser.add_argument('--multichannel', action='store_true',
-                        help='Continue an aborted previous prediction (will not overwrite existing files)')
+                        help='If training used multichannel input trainer')
 
     print(
         "\n#######################################################################\nPlease cite the following paper "
@@ -773,40 +772,42 @@ def predict_entry_point_modelfolder():
 
     if args.target_id is not None:
         all_ids = args.target_id
+    possible_ids = all_num_seg_heads.keys()
+    for id in possible_ids:
+        for pos_id in all_ids:
+            if id.startswith(pos_id):
+                predictor = nnUNetPredictor_MT(tile_step_size=args.step_size,
+                                            use_gaussian=True,
+                                            use_mirroring=not args.disable_tta,
+                                            perform_everything_on_device=True,
+                                            device=device,
+                                            verbose=args.verbose,
+                                            verbose_preprocessing=args.verbose,
+                                            allow_tqdm=not args.disable_progress_bar,
+                                            target_dataset_id=id)
 
-    for id in all_ids:
-        predictor = nnUNetPredictor_MT(tile_step_size=args.step_size,
-                                    use_gaussian=True,
-                                    use_mirroring=not args.disable_tta,
-                                    perform_everything_on_device=True,
-                                    device=device,
-                                    verbose=args.verbose,
-                                    verbose_preprocessing=args.verbose,
-                                    allow_tqdm=not args.disable_progress_bar,
-                                    target_dataset_id=id)
-
-        if args.multichannel:
-            predictor.initialize_from_trained_model_folder(
-                args.m,
-                args.f,
-                checkpoint_name=args.chk,
-                input_channels=all_num_stems,
-                output_channels=all_num_seg_heads
-            )
-        else:
-            predictor.initialize_from_trained_model_folder(
-                args.m,
-                args.f,
-                checkpoint_name=args.chk,
-                output_channels=all_num_seg_heads
-            )
-        predictor.predict_from_files(args.i,  join(args.o, id), save_probabilities=args.save_probabilities,
-                                     overwrite=not args.continue_prediction,
-                                     num_processes_preprocessing=args.npp,
-                                     num_processes_segmentation_export=args.nps,
-                                     folder_with_segs_from_prev_stage=args.prev_stage_predictions,
-                                     num_parts=args.num_parts,
-                                     part_id=args.part_id)
+                if args.multichannel:
+                    predictor.initialize_from_trained_model_folder(
+                        args.m,
+                        args.f,
+                        checkpoint_name=args.chk,
+                        input_channels=all_num_stems,
+                        output_channels=all_num_seg_heads
+                    )
+                else:
+                    predictor.initialize_from_trained_model_folder(
+                        args.m,
+                        args.f,
+                        checkpoint_name=args.chk,
+                        output_channels=all_num_seg_heads
+                    )
+                predictor.predict_from_files(args.i,  join(args.o, id), save_probabilities=args.save_probabilities,
+                                             overwrite=not args.continue_prediction,
+                                             num_processes_preprocessing=args.npp,
+                                             num_processes_segmentation_export=args.nps,
+                                             folder_with_segs_from_prev_stage=args.prev_stage_predictions,
+                                             num_parts=args.num_parts,
+                                             part_id=args.part_id)
 
 
 def predict_entry_point():
