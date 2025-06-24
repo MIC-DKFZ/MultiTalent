@@ -52,7 +52,8 @@ dependencies = [
     "medpy",
     "batchgeneratorsv2>=0.2",
     "einops",
-    "blosc2"
+    "blosc2>=3.0.0b1",
+    "timm"
 ]
 
 [project.urls]
@@ -65,8 +66,7 @@ multitalent_extract_fingerprint = "multitalent.experiment_planning.plan_and_prep
 multitalent_plan_experiment = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:plan_experiment_entry"
 multitalent_preprocess = "multitalent.experiment_planning.plan_and_preprocess_entrypoints:preprocess_entry"
 multitalent_train = "multitalent.run.run_training_MT:run_training_entry"
-multitalent_predict_from_modelfolder = "multitalent.inference.predict_from_raw_data:predict_entry_point_modelfolder"
-multitalent_predict = "multitalent.inference.predict_from_raw_data:predict_entry_point"
+multitalent_predict_from_modelfolder = "multitalent.utilities.MultiTalent.predict_from_raw_data_multitalent:predict_entry_point_modelfolder"
 nnUNetv2_train = "multitalent.run.run_training_MT:run_training_entry"
 nnUNetv2_predict_from_modelfolder = "multitalent.inference.predict_from_raw_data:predict_entry_point_modelfolder"
 nnUNetv2_predict = "multitalent.inference.predict_from_raw_data:predict_entry_point"
