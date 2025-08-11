@@ -99,14 +99,12 @@ def get_MT_network_from_plans(arch_class_name, arch_kwargs, arch_kwargs_req_impo
         if architecture_kwargs[ri] is not None:
             architecture_kwargs[ri] = pydoc.locate(architecture_kwargs[ri])
 
-    if version('dynamic-network-architectures') == '0.3.1' or version('dynamic-network-architectures') == '0.2':
-        if network_class == 'dynamic_network_architectures.architectures.residual_unet.ResidualEncoderUNet':
-            # network_class = 'dynamic_network_architectures.architectures.unet.ResidualEncoderUNet'
-            network_class = 'multitalent.utilities.MultiTalent.MultiTalent_architecture.ResidualEncoderUNet'
-        elif network_class == 'dynamic_network_architectures.architectures.unet.ResidualEncoderUNet':
-            network_class = 'multitalent.utilities.MultiTalent.MultiTalent_architecture.ResidualEncoderUNet'
-        else:
-            network_class = 'multitalent.utilities.MultiTalent.MultiTalent_architecture.PlainConvUNet'
+    if network_class.endswith('ResidualEncoderUNet'):
+        network_class = 'multitalent.utilities.MultiTalent.MultiTalent_architecture.ResidualEncoderUNet'
+    elif network_class.endswith('PlainConvUNet'):
+        network_class = 'multitalent.utilities.MultiTalent.MultiTalent_architecture.PlainConvUNet'
+    else:
+        raise ValueError('The network architecture type is not implemented for multitalent ')
     nw_class = pydoc.locate(network_class)
     # sometimes things move around, this makes it so that we can at least recover some of that
     if nw_class is None:
