@@ -103,3 +103,9 @@ class MultiTalent_trainer_multistems_4000ep(MultiTalent_trainer_multistems):
                  device: torch.device = torch.device('cuda')):
         super().__init__(plans, configuration, fold, dataset_json, unpack_dataset, device)
         self.num_epochs = 4000
+
+class MultiTalent_trainer_multistems_6000ep(MultiTalent_trainer_multistems):
+    def __init__(self, plans: dict, configuration: str, fold: int, dataset_json: dict, unpack_dataset: bool = True,
+                 device: torch.device = torch.device('cuda')):
+        super().__init__(plans, configuration, fold, dataset_json, unpack_dataset, device)
+        self.num_epochs = 6000
