@@ -701,14 +701,14 @@ class MultiTalent_trainer(nnUNetTrainer):
                                       initial_patch_size,
                                       self.configuration_manager.patch_size,
                                       self.label_managers,
-                                      oversample_foreground_percent=self.oversample_foreground_percent,
+                                      oversample_foreground_percent=self.oversample_foreground_percent, probabilistic_oversampling=True,
                                       sampling_probabilities=probabilities, pad_sides=None,transforms=tr_transforms,
                                       labelmapping=self.labelmapping, input_channels = self.input_channels)
         dl_val = nnUNetDataLoader3D_MTall(dataset_val, 1,
                                        self.configuration_manager.patch_size,
                                        self.configuration_manager.patch_size,
                                        self.label_managers,
-                                       oversample_foreground_percent=self.oversample_foreground_percent,
+                                       oversample_foreground_percent=self.oversample_foreground_percent, probabilistic_oversampling=True,
                                        sampling_probabilities=probabilities_val, pad_sides=None, transforms=val_transforms,
                                        labelmapping=self.labelmapping, input_channels = self.input_channels)
 
