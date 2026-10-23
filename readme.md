@@ -45,12 +45,6 @@ By default, predictions will be generated for all available dataset-specific seg
 To restrict inference to specific heads, use the `-target_ids` flag with a list of IDs.
 If your MultiTalent model was trained with multichannel input, add the`--multichannel` flag.
 
-> **Note:**  
-> The model may produce false positives in regions far from the actual target area.  
-> However, within the target region, predictions are typically very accurate.  
-> You may consider cropping predictions to the relevant anatomical region to reduce false positives.
-
-
 Please cite the following work if you find this model useful for your research. If you want to reproduce the paper results, checkout the corresponding branch (MultiTalentV1). :
 
     Ulrich, C., Isensee, F., Wald, T., Zenk, M., Baumgartner, M., Maier-Hein, K.H. (2023). 
