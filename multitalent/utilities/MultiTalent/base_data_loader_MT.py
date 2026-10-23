@@ -197,7 +197,7 @@ class nnUNetDataLoader3D_MTall(DataLoader):
                     prop_loc[i[1]] = properties['class_locations'][i[1]]
             else:
                 prop_loc = properties['class_locations']
-            bbox_lbs, bbox_ubs = self.get_bbox(shape, case_id, force_fg, prop_loc)
+            bbox_lbs, bbox_ubs = self.get_bbox(shape, force_fg, case_id, prop_loc)
 
             # whoever wrote this knew what he was doing (hint: it was me). We first crop the data to the region of the
             # bbox that actually lies within the data. This will result in a smaller array which is then faster to pad.
@@ -293,11 +293,11 @@ class nnUNetDataLoader3D_MTall(DataLoader):
 
         # if not force_fg then we can just sample the bbox randomly from lb and ub. Else we need to make sure we get
         # at least one of the foreground classes in the patch
-        if not force_fg and not self.has_ignore:
+        if not force_fg and not self.has_ignore[id]:
             bbox_lbs = [np.random.randint(lbs[i], ubs[i] + 1) for i in range(dim)]
             # print('I want a random location')
         else:
-            if not force_fg and self.has_ignore:
+            if not force_fg and self.has_ignore[id]:
                 selected_class = self.annotated_classes_key[id]
                 if len(class_locations[selected_class]) == 0:
                     # no annotated pixels in this case. Not good. But we can hardly skip it here
@@ -316,7 +316,7 @@ class nnUNetDataLoader3D_MTall(DataLoader):
                 # if we have annotated_classes_key locations and other classes are present, remove the annotated_classes_key from the list
                 # strange formulation needed to circumvent
                 # ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-                tmp = [i == self.annotated_classes_key if isinstance(i, tuple) else False for i in eligible_classes_or_regions]
+                tmp = [i == self.annotated_classes_key[id] if isinstance(i, tuple) else False for i in eligible_classes_or_regions]
                 if any(tmp):
                     if len(eligible_classes_or_regions) > 1:
                         eligible_classes_or_regions.pop(np.where(tmp)[0][0])
